@@ -1,0 +1,165 @@
+TODO List:
+- Version 2
+
+version 1.10.10 (2012-08-08):
+    - Support RB 1.3.1-R1.0
+
+version 1.10.9 (2012-06-20):
+    - Fix a concurrency issue with additional worlds management
+
+version 1.10.8 (2012-06-17):
+    - Support RB 1.2.5-R4.0 
+    
+version 1.10.7 (2012-04-04):
+    - Support RB 1.2.5-R1.0
+    
+version 1.10.6 (2012-03-29):
+	- Support RB 1.2.4-R1.0
+    
+version 1.10.5 (2012-03-27):
+	- Fix not saving the configuration for tpblock config
+    
+version 1.10.4 (2012-03-27):
+	- Support RB 1.2.4-R0.1
+	- Get the version from the plugin description (instead of from a global variable)
+	- Use the onEnable and onDisable methods from superclass
+    
+version 1.10.3 (2012-03-14):
+	- Support RB 1.1-R8
+    
+version 1.10.2 (2012-02-18):
+    - Support RB 1.1-R4
+    - Fix Admin TP check for portals and standard teleportation (wrong display of message)
+    - Fix Restriction check for portals teleportation (wrong assignment of variable)
+    
+version 1.10.1 (2012-02-05):
+    - 1.1-R3 support
+    - Command /tg version : display the current version of the plugin
+    - Help message update (with new commands)
+    - Remove the target teleport system (you won't be able to teleport by typing /tg and targetting a sign with only a destination on it)
+    - Fix the tpblock configuration when disabled in the config file
+    - travelgates.sign permission node has been renamed travelgates.lever (more accurate)
+    - Refactor the internal options system, which implies:
+        -> Improve the r option to update easily restrictions (if you want to add or remove restrictions, only use + or - before the destinations to add or remove, others will be ignored, empty list will remove all restrictions)
+        -> Update command only update the new settings (and not reset all options)
+        -> Existing options will be toggled (see examples in Readme)
+        -> r and p options can be used with no argument. (/tg update <dest> -r -> clear all restrictions or /tg update <dest> -p use the player location)
+        -> Options system is safer
+    - Fix the "no data to save" message. Restrictions data was not updated.
+    - Print destination details after updating it
+    - Simple world management, improving the /tg worlds command (update messages) 
+    - New configuration "worlds" to load additional worlds (only load unloaded and existing worlds, others will be ignored)
+    - Fix the error message that appears when you click on a sign by being not on destination but which said "you are already at <dest>" where you wanted to go!
+     
+version 1.9.2 (2012-01-29):
+    - Fix file creation issue
+    - Fix the lookup custom "BlockFaces" for destination and portal research (there were two "NORTH" face)
+    - Minor changes on the Nether Portal algorithm to make it more "convenient" for users
+    - Support Craftbukkit 1.1-R2
+    
+version 1.9 (2012-01-27):
+    - Native Bukkit's Permissions support   
+    - Fix destinations case (Bug for Portal Signs)
+    - New configuration : auto-save
+    - Command /tg del can be used with the option -s to save the data
+    - Option -p() can be used "void" to update a destination with the player location
+    - New Permissions nodes for each teleportation means (the node "travelgates.portal" has been renamed "travelgates.teleportportal")
+    - Permission node "options" has been renamed "update"
+    - New command /tg config : show the current configuration of the plugin (Need messages update)
+    - Each command has several aliases
+    - New commands for toggle all boolean (true/false) configurations : /tg perms, /tg signtp, /tg portaltp, /tg clearallinv, /tg autosave (Need messages update)
+    - Configuration will be saved with /tg save or with autosave (if using toggle commands)
+    - Fix the pattern for message variables (numbers not recognized in variables)
+    - Fix the restricted destinations check for Nether Portal teleportation
+    - Teleport player using Nether Portal from adjacent blocks of the portal (also fix a bug if player not standing on the destination block)
+    - New command parameter /tg details <destination> : show only the details of the selected destination
+    - Support for the new events system from the RB 1.1-R1
+    - New configuration : teleport block
+    - Teleportation on teleport blocks which are adjacent to a destination (itself a teleport block)
+    - /tg <dest> -f allow teleportation without being on another destination (for admin by default)
+    
+version 1.8 (2012-01-08):
+    - Logger message when players teleport from destination to another
+    - Optimization of researches (destination / location / options / restrictions)
+    - Add a control when a player is trying to add a Portal sign (Permissions' node is the same as lever : travelgates.sign)
+    - Force arrival chunk to be loaded after being teleported, if it is not the case
+    - New option -r to restrict destinations from the player's current location (add new messages)
+    - Minor fix on /tg loc command (check if destination exists)
+
+version 1.7.1 (2012-01-03):
+    - Code clean up. (forgotten debug messages)
+    - Add the /tg update command, which is the same as the /tg options command but more convenient
+    - Refactoring the readme file
+
+version 1.7 (2012-01-02):
+    - Refactoring constants' names
+    - Using smart enumeration for permissions nodes
+    - New options "p" used to specify manually a Location for a destination when using /tg add or /tg options.
+    - New Command /tg worlds to list all available worlds on the server.
+
+version 1.6.3 (2011-12-13):
+    - Compatibility with Bukkit's Build [1597]
+ 
+version 1.6.2 (2011-11-05):
+    - Option "i" resets the armor when the configuration "clearallinventory=true" is used.
+    - New configuration "clearallinventory"
+    - New message "ALL_INVENTORY_LOST"
+    - Fix a bug on signs : right click without having the node "teleport" makes a message appear
+    - Fix the debug mode starting with the configuration (was not enabled everywhere)
+    - Added the color of Options Error message
+
+version 1.6.1 (2011-10-22): 
+    - Compatibility with the Bukkit's Leet Build [1337]
+
+version 1.6 (2011-10-18):
+    - Compatibility with the Bukkit's Build [1317]
+    - Compatibility with PermissionsBukkit and PermissionsEx
+    - Nodes update & fix (previous nodes with admin/user group nodes seemed to not work...)
+    - Better Permissions handling (Auto detection of the Permissions plugin used and force the loading of the Permissions plugin if the order of plugins is wrong) 
+    - New configuration paramater : "debug" used to set the debug mode at the beginning of the plugin. (useful to debug the plugin's loading)
+    - Fix the commands /tg loc and /tg options while using them with no destination (no message before, now help message)
+    - Better /tg help message.
+
+version 1.5.1 (2011-10-09):
+    - Fixing NullPointerException occuring when using Permissions
+
+version 1.5 (2011-10-09):
+    - Substitution of Nether Portals using TravelGates's Sign
+    - Minecraft Logger is used instead of System.out/err
+    - Ingame debug mode with /tg debug
+    - Config teleport modes (choice between sign and/or portals)
+    - Teleportation on Sign is more permissible (See the README for more information)
+    - No-Message improvement (the searched message is displayed)
+    - Better configuration file managment
+    - Messages update (new messages, language file update needed)
+
+version 1.4 (2011-09-29):
+    - Vertical view position is ignored when setting a destination (always facing the horizon)
+    - The sign used to teleport a player can be filled on any lines
+    - A default message is sent if no message has been found 
+    - Save command : /tg save -> force destinsions save
+    - Options update command : /tg options <desination> -[options]
+
+version 1.3 (2011-09-28):
+    - Fix the Permissions issue
+    - Minor update on the message "variable" system. 
+    - Switch the meaning of the "i" option (i = clear inventory instead of saving it)
+    - Now teleport player on the destination's bloc center
+    - New option "a" : means only OP's can use this gate (or Permissions' admins)
+    - New option "s" : means that after adding the new destination, all destinations will be saved
+
+version 1.2 (2011-09-25):
+    - Configuration file
+    - Permission compatibility
+    - Multilangual messages system
+    - Details command displays options
+    - System log messages are in English
+    - Disable all plugin actions if loading has failed
+
+version 1.1 (2011-09-24):
+    - Compatibility to Bukkit build #1185
+    - Internal minor changes (constants, messages)
+
+version 1.0 (2011-09-16):
+    - Initial build
+    - All texts are in French
