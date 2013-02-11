@@ -39,12 +39,14 @@ public class TravelGatesPortalListener implements Listener
 		_plugin = plugin;
 		_plugin.getPM().registerEvents(this, _plugin);
 	}
-
+	
 	@EventHandler
-	public void onPlayerPortal(PlayerPortalEvent event)
+	public void onPlayerPortal(final PlayerPortalEvent event)
 	{
 		if (_plugin.isPluginEnabled() && _plugin.isPortalTeleportEnabled())
 		{
+			System.out.println("Using portal!");
+			
 			final Player player = event.getPlayer();
 
 			final Location playerLocation = player.getLocation();
@@ -67,6 +69,25 @@ public class TravelGatesPortalListener implements Listener
 						portalBlock = block;
 						break;
 					}
+					else
+					{
+						if (_plugin.isDebugEnabled())
+						{
+							_LOGGER.info("[Debug] No portal block here: " + block.getType());
+						}
+					}
+				}
+			}
+			
+			if (portalBlock == null)
+			{
+				if (playerBlock.getType() == Material.PORTAL)
+				{
+					if (_plugin.isDebugEnabled())
+					{
+						_LOGGER.info("[Debug] Player was in portal.");
+					}
+					portalBlock = playerBlock;
 				}
 			}
 
@@ -178,7 +199,7 @@ public class TravelGatesPortalListener implements Listener
 
 											final boolean inventoryCleared = _plugin.getOptionOfDestination(destination,
 													TravelGatesOptions.INVENTORY);
-											if (!inventoryCleared)
+											if (!inventoryCleared || _plugin.isProtectedInventory(player))
 											{
 												player.sendMessage(ChatColor.YELLOW
 														+ _plugin.getMessage(TravelGatesMessages.YOU_ARE_ARRIVED_AT, destination)
@@ -206,13 +227,10 @@ public class TravelGatesPortalListener implements Listener
 										}
 										else
 										{
-											if (sameLocations)
-											{
-												player.sendMessage(ChatColor.RED
-														+ _plugin.getMessage(TravelGatesMessages.YOURE_ALREADY_AT, destination));
-												player.sendMessage(ChatColor.YELLOW + _plugin.getMessage(TravelGatesMessages.PORTAL_TP_CANCELLED));
-												event.setCancelled(true);
-											}
+											player.sendMessage(ChatColor.RED
+													+ _plugin.getMessage(TravelGatesMessages.YOURE_ALREADY_AT, destination));
+											player.sendMessage(ChatColor.YELLOW + _plugin.getMessage(TravelGatesMessages.PORTAL_TP_CANCELLED));
+											event.setCancelled(true);
 										}
 									}
 									else
@@ -248,6 +266,20 @@ public class TravelGatesPortalListener implements Listener
 							player.sendMessage(ChatColor.YELLOW + _plugin.getMessage(TravelGatesMessages.TELEPORT_TO_NETHER));
 						}
 					}
+				}
+				else
+				{
+					if (_plugin.isDebugEnabled())
+					{
+						_LOGGER.info("[Debug] No destination found.");
+					}
+				}
+			}
+			else
+			{
+				if (_plugin.isDebugEnabled())
+				{
+					_LOGGER.info("[Debug] No portal block found.");
 				}
 			}
 		}

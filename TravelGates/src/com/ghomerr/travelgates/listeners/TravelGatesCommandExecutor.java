@@ -394,6 +394,23 @@ public class TravelGatesCommandExecutor implements CommandExecutor
 								}
 							}
 						}
+						// /tg protectadmininv
+						else if (TravelGatesCommands.PROECTADMININV.has(arg1))
+						{
+							if (_plugin.hasPermission(player, TravelGatesPermissionsNodes.PROTECTADMININV))
+							{
+								boolean clearAllInventoryEnabled = _plugin.toggleProtectAdminInventoryState();
+
+								if (clearAllInventoryEnabled)
+								{
+									player.sendMessage(ChatColor.GREEN + _plugin.getMessage(TravelGatesMessages.PROTECTADMININV_ENABLED));
+								}
+								else
+								{
+									player.sendMessage(ChatColor.RED + _plugin.getMessage(TravelGatesMessages.PROTECTADMININV_DISABLED));
+								}
+							}
+						}
 						// /tg autosave
 						else if (TravelGatesCommands.AUTOSAVE.has(arg1))
 						{

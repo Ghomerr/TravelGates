@@ -14,6 +14,8 @@ public enum TravelGatesConfigurations
 	
 	CLEARALLINVENTORY("clearallinventory"),
 	
+	PROTECTADMININVENTORY("protectadmininventory"),
+	
 	AUTOSAVE("autosave"),
 	
 	TPBLOCK("tpblock"),

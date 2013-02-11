@@ -29,6 +29,8 @@ public enum TravelGatesPermissionsNodes
 	
 	CLEARALLINV(TravelGatesConstants.PERMISSIONS_ROOT + "clearallinv", true),
 	
+	PROTECTADMININV(TravelGatesConstants.PERMISSIONS_ROOT + "protectadmininv", true),
+	
 	AUTOSAVE(TravelGatesConstants.PERMISSIONS_ROOT + "autosave", true),
 	
 	TPBLOCK(TravelGatesConstants.PERMISSIONS_ROOT + "tpblock", true),

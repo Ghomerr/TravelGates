@@ -599,26 +599,37 @@ public class TravelGatesUtils
 		}
 
 		Location destLocation = null;
-		final String str = plugin.getDestination(playerLoc);
+		String str = plugin.getDestination(playerLoc);
 
 		if (str != null)
 		{
+			// Player on dest
 			destLocation = playerLoc;
 		}
 		else
 		{
-			for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
+			final Location portalBlockLocation = portalBlock.getLocation();
+			str = plugin.getDestination(portalBlockLocation);
+			if (str != null)
 			{
-				final Location relLoc = portalBlock.getRelative(tgFace.face()).getLocation();
-
-				if (plugin.getDestination(relLoc) != null)
+				// Portal block on dest
+				destLocation = portalBlock.getLocation(portalBlockLocation);
+			}
+			else
+			{
+				// Search nearest blocks
+				for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
 				{
-					destLocation = relLoc;
-					break;
+					final Location relLoc = portalBlock.getRelative(tgFace.face()).getLocation();
+					if (plugin.getDestination(relLoc) != null)
+					{
+						destLocation = relLoc;
+						break;
+					}
 				}
 			}
 		}
-
+		
 		if (_isDebugEnabled)
 		{
 			_LOGGER.info(_debug + " End getDestinationLocationNearPortal : " + destLocation);

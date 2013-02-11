@@ -63,6 +63,7 @@ public class TravelGates extends JavaPlugin
 	private boolean _teleportWithSign = true;
 	private boolean _teleportWithPortal = false;
 	private boolean _clearAllInventory = false;
+	private boolean _protectAdminInventory = false;
 	private boolean _autosave = false;
 	private boolean _isDebugEnabled = false;
 	private TravelGatesTeleportBlock _tpBlock = new TravelGatesTeleportBlock();
@@ -797,21 +798,11 @@ public class TravelGates extends JavaPlugin
 
 	public String getDestination(final Location location)
 	{
-		if (_isDebugEnabled)
-		{
-			_LOGGER.info(_debug + " Start getDestination(location=" + location + ")");
-		}
-
 		String dest = null;
 
 		final String shortLoc = TravelGatesUtils.locationToShortString(location);
 
 		dest = getDestination(shortLoc);
-
-		if (_isDebugEnabled)
-		{
-			_LOGGER.info(_debug + " End getDestination : " + dest);
-		}
 
 		return dest;
 	}
@@ -1184,7 +1175,9 @@ public class TravelGates extends JavaPlugin
 				}
 
 				final boolean inventoryCleared = getOptionOfDestination(destination, TravelGatesOptions.INVENTORY);
-				if (!inventoryCleared)
+				System.out.println("inventoryCleared=" + inventoryCleared + "; _protectAdminInventory=" + _protectAdminInventory 
+						+ "; perm=" + hasPermission(player, TravelGatesPermissionsNodes.PROTECTADMININV));
+				if (!inventoryCleared || isProtectedInventory(player))
 				{
 					player.sendMessage(ChatColor.YELLOW
 							+ _messages.get(TravelGatesMessages.YOU_ARE_ARRIVED_AT, ChatColor.AQUA + destination + ChatColor.YELLOW)
@@ -1596,6 +1589,29 @@ public class TravelGates extends JavaPlugin
 					_LOGGER.severe(_tag + " Clear all inventory configuration reading failed.");
 					th.printStackTrace();
 				}
+				
+				// PROTECT ADMIN INVENTORY
+				try
+				{
+					final String protectAdminInventory = 
+							_configData.getProperty(TravelGatesConfigurations.PROTECTADMININVENTORY.value());
+
+					if (TravelGatesUtils.stringIsNotBlank(protectAdminInventory))
+					{
+						_protectAdminInventory = Boolean.parseBoolean(protectAdminInventory.toLowerCase());
+					}
+					else
+					{
+						_LOGGER.warning(_tag + " Protect admin inventory configuration not found.");
+					}
+
+					_LOGGER.info(_tag + " Protect admin inventory configuration set to : " + _protectAdminInventory);
+				}
+				catch (final Throwable th)
+				{
+					_LOGGER.severe(_tag + " Protect admin inventory configuration reading failed.");
+					th.printStackTrace();
+				}
 
 				// AUTO SAVE
 				try
@@ -1687,6 +1703,7 @@ public class TravelGates extends JavaPlugin
 				// Add default config
 				_configData.put(TravelGatesConfigurations.AUTOSAVE.value(), String.valueOf(_autosave));
 				_configData.put(TravelGatesConfigurations.CLEARALLINVENTORY.value(), String.valueOf(_clearAllInventory));
+				_configData.put(TravelGatesConfigurations.PROTECTADMININVENTORY.value(), String.valueOf(_protectAdminInventory));
 				_configData.put(TravelGatesConfigurations.DEBUG.value(), String.valueOf(_isDebugEnabled));
 				_configData.put(TravelGatesConfigurations.LANGUAGE.value(), _language);
 				_configData.put(TravelGatesConfigurations.TELEPORTWITHPORTAL.value(), String.valueOf(_teleportWithPortal));
@@ -2209,6 +2226,25 @@ public class TravelGates extends JavaPlugin
 		}
 
 		return _clearAllInventory;
+	}
+	
+	public boolean toggleProtectAdminInventoryState()
+	{
+		_protectAdminInventory = !_protectAdminInventory;
+
+		_configData.put(TravelGatesConfigurations.PROTECTADMININVENTORY.value(), String.valueOf(_protectAdminInventory));
+
+		if (_autosave)
+		{
+			saveConfiguration();
+		}
+
+		if (_isDebugEnabled)
+		{
+			_LOGGER.info(_debug + " PROTECT ADMIN INVENTORY : " + ((_protectAdminInventory) ? "ENABLED" : "DISABLED"));
+		}
+
+		return _protectAdminInventory;
 	}
 
 	public boolean toggleTeleportBlockState()
@@ -2787,5 +2823,10 @@ public class TravelGates extends JavaPlugin
 		}
 
 		return strBld.toString();
+	}
+	
+	public boolean isProtectedInventory(final Player player)
+	{
+		return _protectAdminInventory && hasPermission(player, TravelGatesPermissionsNodes.PROTECTADMININV);
 	}
 }

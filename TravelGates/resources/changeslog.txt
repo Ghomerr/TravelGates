@@ -1,6 +1,11 @@
 TODO List:
 - Version 2
 
+version 1.10.12 (2013-02-11):
+    - Support Dev Build 1.4.7-R1.0
+    - Added a new configuration parameter (protect admin inventory when clear inventory is enabled) (messages update needed)
+    - Fixed some teleportation issue on destionation detection.
+
 version 1.10.11 (2012-12-24):
     - Support Dev Build 1.4.6-R0.2
 

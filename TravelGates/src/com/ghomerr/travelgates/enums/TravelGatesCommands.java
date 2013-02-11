@@ -52,6 +52,8 @@ public enum TravelGatesCommands
 	
 	CLEARALLINV(new String[] {"cai", "clr", "clear", "clearall", "clearinv", "clearallinv", "clearallinventory"}),
 	
+	PROECTADMININV(new String[] {"pai", "pro", "protectadm", "protectadminv", "protectadmininv", "protectadmininventory", "prtadminv"}),
+	
 	AUTOSAVE(new String[] {"as", "autosave"}),
 	
 	TPBLOCK(new String[] {"tpb", "tpblk", "tpblc", "tpblock", "tpbloc", "teleportblock"}),
