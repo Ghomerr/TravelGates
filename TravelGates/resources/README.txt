@@ -43,6 +43,7 @@ Configuration parameters:
     teleportwithportal      : (true/false) enable Nether Portals substitution 
     debug                   : (true/false) used to enable the debug mode when the plugin is loading.
     clearallinventory       : (true/false) used to clear the armor content when the "i" option is set to a destination
+    protectadmininventory   : (true/false) used to protect admin inventory when the clear inventory option is enabled
     tpblock                 : (type[,data]/disabled) used to select the teleport block:
                                 - type (case insensitive) = BEDROCK,BOOKSHELF,BRICK,CLAY,COAL_ORE,COBBLESTONE,DIAMOND_BLOCK,DIAMOND_ORE,DIRT,ENDER_STONE,FURNACE,GLASS,GLOWING_REDSTONE_ORE,GLOWSTONE,GOLD_BLOCK,GOLD_ORE,GRASS,GRAVEL,ICE,IRON_BLOCK,IRON_ORE,JACK_O_LANTERN,JUKEBOX,LAPIS_BLOCK,LAPIS_ORE,LOG,MELON_BLOCK,MOSSY_COBBLESTONE,MYCEL,NETHER_BRICK,NETHERRACK,NOTE_BLOCK,OBSIDIAN,PUMPKIN,REDSTONE,SAND,SANDSTONE,SMOOTH_BRICK,SNOW_BLOCK,SOUL_SAND,SPONGE,STONE,TNT,WOOD,WOOL,WORKBENCH
                                 - data (case insensitive) = all DyeColor for WOOL or TreeSpecies for LOG
@@ -78,6 +79,7 @@ travelgates.perms       # Permission to toogle permissions
 travelgates.signtp      # Permission to toggle the usage of sign teleportation
 travelgates.portaltp    # Permission to toggle the usage of nether portal
 travelgates.clearallinv # Permission to toggle the state of the option clear all inventory
+travelgates.protectadmininv # Permission to toggle the state of the configuration protect admin inventory and to be eligible to this protection
 travelgates.autosave    # Permission to toggle the auto save
 travelgates.tpblock     # Perrmissions to modify the tp block
 travelgates.forcetp     # Permissions to teleport from everywhere using /tg <dest>
@@ -117,6 +119,7 @@ Plugin in-game usage:
     /tg signtp : toggle the usage of sign to teleport 
     /tg portaltp : toggle the usage of the nether portal to teleport 
     /tg clearallinv : toggle the state of the clear all inventory option
+    /tg protectadmininv : toggle the state of the protect admin inventory option
     /tg autosave : toggle the auto save
     /tg tpblock [new_configuration] : modify or toggle the tp block
     /tg <destination> [-f] : teleport player to the destination if he is standing on an existing location. If an admin uses the -f option, he can travel from everywhere.
@@ -167,6 +170,7 @@ Commands aliases:
     SIGNTP: "stp", "signtp", "signteleport", "teleportwithsign"
     PORTALTP: "ptp", "portaltp", "portalteleport", "teleportwithportal"
     CLEARALLINV: "cai", "clr", "clear", "clearall", "clearinv", "clearallinv", "clearallinventory"
+    PROTECTADMININV: "pai", "pro", "protectadm", "protectadminv", "protectadmininv", "protectadmininventory", "prtadminv"
     AUTOSAVE: "as", "autosave"
     TPBLOCK: "tpb", "tpblk", "tpblc", "tpblock", "tpbloc", "teleportblock"
     VERSION: "v", "ver", "version"
