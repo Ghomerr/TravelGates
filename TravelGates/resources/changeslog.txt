@@ -1,6 +1,9 @@
 TODO List:
 - Version 2
 
+version 1.10.13 (2013-04-08):
+    - Support Dev Build 1.5.1-R0.2
+
 version 1.10.12 (2013-02-11):
     - Support Dev Build 1.4.7-R1.0
     - Added a new configuration parameter (protect admin inventory when clear inventory is enabled) (messages update needed)

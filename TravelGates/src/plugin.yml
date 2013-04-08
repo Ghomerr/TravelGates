@@ -1,6 +1,6 @@
 name: TravelGates
 main: com.ghomerr.travelgates.TravelGates
-version: 1.10.12 [1.4.7-R1.0]
+version: 1.10.13 [1.5.1-R0.2]
 author: Ghomerr
 description: Set up some travel gates. A file "destinations.dat" is created to store data.
 commands:
