@@ -195,6 +195,8 @@ Examples:
     /tg update New-York -r : remove all restricted destinations
    
     /tg tpblock : toggle the state of the configuration. If it was enabled, it will be disabled. If it was disabled, it will restore the last configuration.
+    /tg tpblock wool : set the teleport block to a white (default) wool.
+    /tg tpblock wool,0 : set the teleport block to a white (data value) wool.
     /tg tpblock wool,lime : set the teleport block to a lime wool.
     /tg tpblock cobblestone : set the teleport block to a cobblestone.
     /tg tpblock disabled : disable the teleport block.
