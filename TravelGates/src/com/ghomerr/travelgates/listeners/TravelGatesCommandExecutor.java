@@ -687,7 +687,7 @@ public class TravelGatesCommandExecutor implements CommandExecutor
 									}
 								}
 
-								_plugin.teleportPlayerToDest(arg1, player, false, ignorePlayerLocation);
+								_plugin.teleportPlayerToDest(arg1, player, false, ignorePlayerLocation, null);
 							}
 						}
 						else

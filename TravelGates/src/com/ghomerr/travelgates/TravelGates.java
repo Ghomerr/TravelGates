@@ -111,6 +111,11 @@ public class TravelGates extends JavaPlugin
 	{
 		super.onEnable();
 
+		// Load Configuration
+		loadConfiguration();
+		loadAdditionalWorld();
+		loadMessages();
+		loadPermissions();
 		_pluginEnabled = loadDestinations();
 
 		if (!_pluginEnabled)
@@ -120,12 +125,6 @@ public class TravelGates extends JavaPlugin
 		else
 		{
 			_pm = getServer().getPluginManager();
-
-			// Load Configuration
-			loadConfiguration();
-			loadAdditionalWorld();
-			loadMessages();
-			loadPermissions();
 
 			playerListener = new TravelGatesPlayerListener(this);
 			portalListener = new TravelGatesPortalListener(this);
@@ -831,7 +830,8 @@ public class TravelGates extends JavaPlugin
 		return TravelGatesConstants.DESTINATION_NAME_PATTERN;
 	}
 
-	public boolean teleportPlayerToDest(final String dest, final Player player, final boolean destHasBeenChecked, final boolean ignorePlayerLocation)
+	public boolean teleportPlayerToDest(final String dest, final Player player, final boolean destHasBeenChecked, 
+			final boolean ignorePlayerLocation, final String portalDestinationShortLoc)
 	{
 		if (_isDebugEnabled)
 		{
@@ -866,14 +866,21 @@ public class TravelGates extends JavaPlugin
 
 			if (!ignorePlayerLocation)
 			{
-				if (playerIsOnExistingDestination)
+				if (playerIsOnExistingDestination || portalDestinationShortLoc != null)
 				{
-					if (_tpBlock.isEnabled() && !_tpBlock.isTPBlock(player.getWorld().getBlockAt(playerLocation).getRelative(BlockFace.DOWN)))
+					if (portalDestinationShortLoc == null && _tpBlock.isEnabled() && !_tpBlock.isTPBlock(player.getWorld().getBlockAt(playerLocation).getRelative(BlockFace.DOWN)))
 					{
 						playerNotOnTeleportBlock = true;
 					}
 
-					nearestDestinationShortLocation = playerShortLoc;
+					if (playerIsOnExistingDestination)
+					{
+						nearestDestinationShortLocation = playerShortLoc;
+					}
+					else if (portalDestinationShortLoc != null)
+					{
+						nearestDestinationShortLocation = portalDestinationShortLoc;
+					}
 				}
 				else
 				{
@@ -907,6 +914,12 @@ public class TravelGates extends JavaPlugin
 							{
 								final Location loc = _mapLocationsByDest.get(key);
 
+								if (_isDebugEnabled)
+								{
+									_LOGGER.info("#1bis : key = " + key + " ; playerLocation.getWorld()=" + playerLocation.getWorld() 
+										+ " ; loc.getWorld()= " + loc.getWorld());
+								}
+								
 								if (playerLocation.getWorld() == loc.getWorld())
 								{
 									rightWorldsList.add(loc);
@@ -1114,7 +1127,7 @@ public class TravelGates extends JavaPlugin
 				_LOGGER.info("#12 : playerNotOnTeleportBlock = " + playerNotOnTeleportBlock);
 				_LOGGER.info("#13 : nearestDestinationShortLocation = " + nearestDestinationShortLocation);
 			}
-			if (playerNotOnTeleportBlock)
+			if (_tpBlock.isEnabled() && playerNotOnTeleportBlock)
 			{
 				player.sendMessage(ChatColor.RED
 						+ _messages.get(TravelGatesMessages.NOT_STANDING_ON_TPBLOCK, ChatColor.YELLOW + _tpBlock.toString() + ChatColor.RED));
@@ -2348,34 +2361,69 @@ public class TravelGates extends JavaPlugin
 			_LOGGER.info(_debug + " Start configTeleportBlock(tpblock=" + tpblock + ")");
 		}
 
-		boolean ret = false;
+		boolean result = false;
 
 		String[] split = tpblock.split(TravelGatesConstants.DELIMITER);
 
 		if (split.length >= 1)
 		{
 			final String material = split[0];
-
 			final Integer typeId = _mapMaterialIdByName.get(material.toLowerCase());
 
 			if (typeId != null)
 			{
 				final Material type = Material.getMaterial(typeId);
-
+				// Ticket #18: default values for Wool and Log materials
+				if (split.length == 1)
+				{
+					switch (type)
+					{
+						case WOOL:
+							_tpBlock.setColor(DyeColor.WHITE);
+							break;
+							
+						case LOG:
+							_tpBlock.setSpecies(TreeSpecies.GENERIC);
+							break;
+					}
+				}
+				
 				_tpBlock.setType(type);
 				_tpBlock.setEnabled(true);
-				ret = true;
+				result = true;
+			}
+			else
+			{
+				_LOGGER.severe(_tag + " Material " + material + " is not expected to be used as a TP Block.");
 			}
 		}
 
-		if (split.length >= 2 && _tpBlock.isEnabled())
+		// Ticket #18: stop if result is false
+		if (result && split.length >= 2)
 		{
 			final String data = split[1];
+			
+			// Ticket #18: check if data is given by id
+			Byte rawData = null;
+			if (TravelGatesUtils.stringIsNotBlank(data) && data.matches(TravelGatesConstants.INTEGER_PATTERN))
+			{
+				rawData = Byte.parseByte(data);
+			}
 
 			switch (_tpBlock.type())
 			{
 				case WOOL:
-					final DyeColor color = _mapDyeColorByName.get(data.toLowerCase());
+					DyeColor color = null;
+					if (rawData != null)
+					{
+						// Ticket #18: color found by data id
+						color = DyeColor.getByWoolData(rawData);
+					}
+					else
+					{
+						color = _mapDyeColorByName.get(data.toLowerCase());
+					}
+					
 					if (color != null)
 					{
 						_tpBlock.setColor(color);
@@ -2383,12 +2431,23 @@ public class TravelGates extends JavaPlugin
 					else
 					{
 						_tpBlock.setEnabled(false);
-						ret = false;
-						_LOGGER.severe(_tag + " TP Block Wool data not found.");
+						result = false;
+						_LOGGER.severe(_tag + " TP Block data: " + data + " is invalid for WOOL Material.");
 					}
 					break;
+					
 				case LOG:
-					final TreeSpecies species = _mapTreeSpeciesByName.get(data.toLowerCase());
+					TreeSpecies species = null;
+					if (rawData != null)
+					{
+						// Ticket #18: species found by data id
+						species = TreeSpecies.getByData(rawData);
+					}
+					else
+					{
+						species = _mapTreeSpeciesByName.get(data.toLowerCase());
+					}
+
 					if (species != null)
 					{
 						_tpBlock.setSpecies(species);
@@ -2396,19 +2455,21 @@ public class TravelGates extends JavaPlugin
 					else
 					{
 						_tpBlock.setEnabled(false);
-						ret = false;
-						_LOGGER.severe(_tag + " TP Block Log data not found.");
+						result = false;
+						_LOGGER.severe(_tag + " TP Block data: " + data + " is invalid for LOG Material.");
 					}
 					break;
+					
 				default:
 					_LOGGER.severe(_tag + " " + _tpBlock.type() + " is not configured to have data.");
 					_tpBlock.setEnabled(false);
-					ret = false;
+					result = false;
 					break;
 			}
 		}
 
-		if (save)
+		// Ticket #18: do not save when errors occurred
+		if (result && save)
 		{
 			_configData.put(TravelGatesConfigurations.TPBLOCK.value(), _tpBlock.toString());
 
@@ -2420,10 +2481,10 @@ public class TravelGates extends JavaPlugin
 
 		if (_isDebugEnabled)
 		{
-			_LOGGER.info(_debug + " End configTeleportBlock : " + ret);
+			_LOGGER.info(_debug + " End configTeleportBlock : " + result);
 		}
 
-		return ret;
+		return result;
 	}
 
 	public TravelGatesOptionsContainer createDestinationOptions(final String destination, final String options)

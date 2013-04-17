@@ -3,7 +3,6 @@ package com.ghomerr.travelgates.listeners;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -21,10 +20,8 @@ import org.bukkit.material.Lever;
 import com.ghomerr.travelgates.TravelGates;
 import com.ghomerr.travelgates.constants.TravelGatesConstants;
 import com.ghomerr.travelgates.enums.TravelGatesBlockFaces;
-import com.ghomerr.travelgates.enums.TravelGatesOptions;
 import com.ghomerr.travelgates.enums.TravelGatesPermissionsNodes;
 import com.ghomerr.travelgates.messages.TravelGatesMessages;
-import com.ghomerr.travelgates.objects.TravelGatesOptionsContainer;
 import com.ghomerr.travelgates.objects.TravelGatesPortalSign;
 import com.ghomerr.travelgates.utils.TravelGatesUtils;
 
@@ -116,129 +113,137 @@ public class TravelGatesPortalListener implements Listener
 							{
 								if (_plugin.hasPermission(player, TravelGatesPermissionsNodes.TELEPORT_PORTAL))
 								{
-									if (_plugin.hasDestination(destination))
+									final String currentDestShortLoc = TravelGatesUtils.locationToShortString(currentDestinationLocation);
+									// Use existing method to do the TP job...
+									// TODO: la currentDestLocation n'est pas une dest forcément, donc ça pète après
+									if(_plugin.teleportPlayerToDest(destination, player, false, false, currentDestShortLoc))
 									{
-										final String targetDestinationfullLoc = _plugin.getFullLoc(destination);
-										final String targetDestinationShortLoc = _plugin.getShortLoc(destination);
-
-										final boolean hasAdminTP = _plugin.getOptionOfDestination(destination, TravelGatesOptions.ADMINTP);
-
-										// Admin TP only
-										if (hasAdminTP)
-
-										{
-											final boolean hasPerm = _plugin.hasPermission(player, TravelGatesPermissionsNodes.ADMINTP);
-											
-											if (!hasPerm)
-											{
-												player.sendMessage(ChatColor.RED + _plugin.getMessage(TravelGatesMessages.ONLY_ADMIN_TP));
-												player.sendMessage(ChatColor.YELLOW + _plugin.getMessage(TravelGatesMessages.TELEPORT_TO_NETHER));
-												return;
-											}
-										}
-										
-										final String currentDestShortLoc = TravelGatesUtils.locationToShortString(currentDestinationLocation);
-
-										final boolean sameLocations = targetDestinationShortLoc.equalsIgnoreCase(currentDestShortLoc);
-
-										// Portal is on existing Location
-										// and destination is not the
-										// current where is standing the
-										// player
-										String currentDestName = null;
-
-										if (!sameLocations)
-										{
-											currentDestName = _plugin.getDestination(currentDestShortLoc);
-											
-											if (currentDestName != null && _plugin.getOptionOfDestination(currentDestName, TravelGatesOptions.RESTRICTION))
-											{
-												final TravelGatesOptionsContainer container = _plugin.getOptionsOfDestination(currentDestName);
-
-												if (container != null && !container.isDestinationAllowed(destination))
-												{
-													player.sendMessage(ChatColor.RED
-															+ _plugin.getMessage(TravelGatesMessages.DESTINATION_IS_RESTRICTED, currentDestName,
-																	destination));
-
-													player.sendMessage(ChatColor.YELLOW
-															+ _plugin.getMessage(TravelGatesMessages.TELEPORT_TO_NETHER));
-
-													return;
-												}
-											}
-											else
-											{
-												if (currentDestName == null)
-												{
-													_LOGGER.severe(TravelGatesConstants.PLUGIN_TAG + " Current destination not found for Portal Teleportation");
-												}
-											}
-
-											// TODO : revoir fullStringToLocation en plus simple ? <- tp system refactoring
-											final Location targetLocation = TravelGatesUtils.fullStringToLocation(targetDestinationfullLoc,
-													player.getServer().getWorlds());
-
-											if (targetLocation.getWorld() != null)
-											{
-												event.setCancelled(true);
-												player.teleport(targetLocation);
-											}
-											else
-											{
-												player.sendMessage(ChatColor.RED
-														+ _plugin.getMessage(TravelGatesMessages.TELEPORT_CANCELLED_WORLD_UNLOADED,
-																ChatColor.AQUA + destination + ChatColor.RED));
-												player.sendMessage(ChatColor.YELLOW
-														+ _plugin.getMessage(TravelGatesMessages.TELEPORT_TO_NETHER));
-												return;
-											}
-
-											_LOGGER.info(TravelGatesConstants.PLUGIN_TAG + " " + player.getName()
-													+ " has used a Nether Portal to travel from " + currentDestName + " to " + destination);
-
-											final boolean inventoryCleared = _plugin.getOptionOfDestination(destination,
-													TravelGatesOptions.INVENTORY);
-											if (!inventoryCleared || _plugin.isProtectedInventory(player))
-											{
-												player.sendMessage(ChatColor.YELLOW
-														+ _plugin.getMessage(TravelGatesMessages.YOU_ARE_ARRIVED_AT, destination)
-														+ ChatColor.GREEN + _plugin.getMessage(TravelGatesMessages.INVENTORY_KEPT));
-											}
-											else
-											{
-												player.getInventory().clear();
-												player.sendMessage(ChatColor.YELLOW
-														+ _plugin.getMessage(TravelGatesMessages.YOU_ARE_ARRIVED_AT, destination) + ChatColor.RED
-														+ _plugin.getMessage(TravelGatesMessages.INVENTORY_LOST));
-											}
-
-											final Chunk arrivalChunk = player.getWorld().getChunkAt(targetLocation);
-											if (!arrivalChunk.isLoaded())
-											{
-												if (_plugin.isDebugEnabled())
-												{
-													_LOGGER.info(TravelGatesConstants.DEBUG_TAG + " The " + destination
-															+ "'s chunk was not loaded at " + targetLocation);
-												}
-
-												arrivalChunk.load();
-											}
-										}
-										else
-										{
-											player.sendMessage(ChatColor.RED
-													+ _plugin.getMessage(TravelGatesMessages.YOURE_ALREADY_AT, destination));
-											player.sendMessage(ChatColor.YELLOW + _plugin.getMessage(TravelGatesMessages.PORTAL_TP_CANCELLED));
-											event.setCancelled(true);
-										}
+										event.setCancelled(true);
 									}
-									else
-									{
-										player.sendMessage(ChatColor.RED
-												+ _plugin.getMessage(TravelGatesMessages.DESTINATION_DOESNT_EXIST, destination));
-										player.sendMessage(ChatColor.YELLOW + _plugin.getMessage(TravelGatesMessages.TELEPORT_TO_NETHER));
-									}
+									
+//									if (_plugin.hasDestination(destination))
+//									{
+//										final String targetDestinationfullLoc = _plugin.getFullLoc(destination);
+//										final String targetDestinationShortLoc = _plugin.getShortLoc(destination);
+//
+//										final boolean hasAdminTP = _plugin.getOptionOfDestination(destination, TravelGatesOptions.ADMINTP);
+//
+//										// Admin TP only
+//										if (hasAdminTP)
+//
+//										{
+//											final boolean hasPerm = _plugin.hasPermission(player, TravelGatesPermissionsNodes.ADMINTP);
+//											
+//											if (!hasPerm)
+//											{
+//												player.sendMessage(ChatColor.RED + _plugin.getMessage(TravelGatesMessages.ONLY_ADMIN_TP));
+//												player.sendMessage(ChatColor.YELLOW + _plugin.getMessage(TravelGatesMessages.TELEPORT_TO_NETHER));
+//												return;
+//											}
+//										}
+//										
+//										final String currentDestShortLoc = TravelGatesUtils.locationToShortString(currentDestinationLocation);
+//
+//										final boolean sameLocations = targetDestinationShortLoc.equalsIgnoreCase(currentDestShortLoc);
+//
+//										// Portal is on existing Location
+//										// and destination is not the
+//										// current where is standing the
+//										// player
+//										String currentDestName = null;
+//
+//										if (!sameLocations)
+//										{
+//											currentDestName = _plugin.getDestination(currentDestShortLoc);
+//											
+//											if (currentDestName != null && _plugin.getOptionOfDestination(currentDestName, TravelGatesOptions.RESTRICTION))
+//											{
+//												final TravelGatesOptionsContainer container = _plugin.getOptionsOfDestination(currentDestName);
+//
+//												if (container != null && !container.isDestinationAllowed(destination))
+//												{
+//													player.sendMessage(ChatColor.RED
+//															+ _plugin.getMessage(TravelGatesMessages.DESTINATION_IS_RESTRICTED, currentDestName,
+//																	destination));
+//
+//													player.sendMessage(ChatColor.YELLOW
+//															+ _plugin.getMessage(TravelGatesMessages.TELEPORT_TO_NETHER));
+//
+//													return;
+//												}
+//											}
+//											else
+//											{
+//												if (currentDestName == null)
+//												{
+//													_LOGGER.severe(TravelGatesConstants.PLUGIN_TAG + " Current destination not found for Portal Teleportation");
+//												}
+//											}
+//
+//											// TODO : revoir fullStringToLocation en plus simple ? <- tp system refactoring
+//											final Location targetLocation = TravelGatesUtils.fullStringToLocation(targetDestinationfullLoc,
+//													player.getServer().getWorlds());
+//
+//											if (targetLocation.getWorld() != null)
+//											{
+//												event.setCancelled(true);
+//												player.teleport(targetLocation);
+//											}
+//											else
+//											{
+//												player.sendMessage(ChatColor.RED
+//														+ _plugin.getMessage(TravelGatesMessages.TELEPORT_CANCELLED_WORLD_UNLOADED,
+//																ChatColor.AQUA + destination + ChatColor.RED));
+//												player.sendMessage(ChatColor.YELLOW
+//														+ _plugin.getMessage(TravelGatesMessages.TELEPORT_TO_NETHER));
+//												return;
+//											}
+//
+//											_LOGGER.info(TravelGatesConstants.PLUGIN_TAG + " " + player.getName()
+//													+ " has used a Nether Portal to travel from " + currentDestName + " to " + destination);
+//
+//											final boolean inventoryCleared = _plugin.getOptionOfDestination(destination,
+//													TravelGatesOptions.INVENTORY);
+//											if (!inventoryCleared || _plugin.isProtectedInventory(player))
+//											{
+//												player.sendMessage(ChatColor.YELLOW
+//														+ _plugin.getMessage(TravelGatesMessages.YOU_ARE_ARRIVED_AT, destination)
+//														+ ChatColor.GREEN + _plugin.getMessage(TravelGatesMessages.INVENTORY_KEPT));
+//											}
+//											else
+//											{
+//												player.getInventory().clear();
+//												player.sendMessage(ChatColor.YELLOW
+//														+ _plugin.getMessage(TravelGatesMessages.YOU_ARE_ARRIVED_AT, destination) + ChatColor.RED
+//														+ _plugin.getMessage(TravelGatesMessages.INVENTORY_LOST));
+//											}
+//
+//											final Chunk arrivalChunk = player.getWorld().getChunkAt(targetLocation);
+//											if (!arrivalChunk.isLoaded())
+//											{
+//												if (_plugin.isDebugEnabled())
+//												{
+//													_LOGGER.info(TravelGatesConstants.DEBUG_TAG + " The " + destination
+//															+ "'s chunk was not loaded at " + targetLocation);
+//												}
+//
+//												arrivalChunk.load();
+//											}
+//										}
+//										else
+//										{
+//											player.sendMessage(ChatColor.RED
+//													+ _plugin.getMessage(TravelGatesMessages.YOURE_ALREADY_AT, destination));
+//											player.sendMessage(ChatColor.YELLOW + _plugin.getMessage(TravelGatesMessages.PORTAL_TP_CANCELLED));
+//											event.setCancelled(true);
+//										}
+//									}
+//									else
+//									{
+//										player.sendMessage(ChatColor.RED
+//												+ _plugin.getMessage(TravelGatesMessages.DESTINATION_DOESNT_EXIST, destination));
+//										player.sendMessage(ChatColor.YELLOW + _plugin.getMessage(TravelGatesMessages.TELEPORT_TO_NETHER));
+//									}
 								}
 								else
 								{

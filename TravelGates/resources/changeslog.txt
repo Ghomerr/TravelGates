@@ -1,6 +1,11 @@
 TODO List:
 - Version 2
 
+version 1.10.14 (2012-04-17):
+    - Fix bug from ticket#18: command /tg tpblock may crash
+    - Make the portal teleportation use the main teleport method
+    - Fix a bug for destinations on additional worlds where their locations are not linked to a loaded world (load methods order issue)
+
 version 1.10.13 (2013-04-08):
     - Support Dev Build 1.5.1-R0.2
 

@@ -56,7 +56,7 @@ public class TravelGatesPlayerListener implements Listener
 								if (_plugin.hasPermission(event.getPlayer(), TravelGatesPermissionsNodes.TELEPORT_SIGN))
 								{
 									event.setCancelled(true);
-									_plugin.teleportPlayerToDest(dest.toLowerCase(), event.getPlayer(), hasDestination, false);
+									_plugin.teleportPlayerToDest(dest.toLowerCase(), event.getPlayer(), hasDestination, false, null);
 								}
 							}
 							else

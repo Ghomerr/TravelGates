@@ -40,6 +40,8 @@ public interface TravelGatesConstants
 	
 	public static final String ADD_RESTRICTION_PATTERN = "^[+][a-zA-Z0-9_-]{1,20}$";
 	
+	public static final String INTEGER_PATTERN = "^[0-9]+$";
+	
 	public static final String REMOVE_RESTTRICTION_PATTERN = "^[-][a-zA-Z0-9_-]{1,20}$";
 	
 	public static final String BLANK_STRING_PATTERN = "^[ ]+$";

@@ -128,7 +128,10 @@ public class TravelGatesTeleportBlock
 	}
 	public boolean toggleState()
 	{
-		_enabled = !_enabled;
+		if (_enabled || _tpBlockType != null)
+		{
+			_enabled = !_enabled;
+		}
 		return _enabled;
 	}
 	public boolean isEnabled()
