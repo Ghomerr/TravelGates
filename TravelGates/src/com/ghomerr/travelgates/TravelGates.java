@@ -110,13 +110,20 @@ public class TravelGates extends JavaPlugin
 	public void onEnable()
 	{
 		super.onEnable();
-
+		
+		// Must be done before loadXXX() methods !
+		_pm = getServer().getPluginManager();
+		
 		// Load Configuration
-		loadConfiguration();
-		loadAdditionalWorld();
-		loadMessages();
-		loadPermissions();
-		_pluginEnabled = loadDestinations();
+		_pluginEnabled = loadConfiguration();
+		if (_pluginEnabled)
+		{
+			// Must be loaded before loadConfiguration()
+			_pluginEnabled = _pluginEnabled && loadAdditionalWorld();
+			_pluginEnabled = _pluginEnabled && loadMessages();
+			_pluginEnabled = _pluginEnabled && loadPermissions();
+			_pluginEnabled = _pluginEnabled && loadDestinations();
+		}
 
 		if (!_pluginEnabled)
 		{
@@ -124,8 +131,6 @@ public class TravelGates extends JavaPlugin
 		}
 		else
 		{
-			_pm = getServer().getPluginManager();
-
 			playerListener = new TravelGatesPlayerListener(this);
 			portalListener = new TravelGatesPortalListener(this);
 			portalSignListener = new TravelGatesSignListener(this);
@@ -1188,8 +1193,8 @@ public class TravelGates extends JavaPlugin
 				}
 
 				final boolean inventoryCleared = getOptionOfDestination(destination, TravelGatesOptions.INVENTORY);
-				System.out.println("inventoryCleared=" + inventoryCleared + "; _protectAdminInventory=" + _protectAdminInventory 
-						+ "; perm=" + hasPermission(player, TravelGatesPermissionsNodes.PROTECTADMININV));
+//				System.out.println("inventoryCleared=" + inventoryCleared + "; _protectAdminInventory=" + _protectAdminInventory 
+//						+ "; perm=" + hasPermission(player, TravelGatesPermissionsNodes.PROTECTADMININV));
 				if (!inventoryCleared || isProtectedInventory(player))
 				{
 					player.sendMessage(ChatColor.YELLOW
@@ -1451,7 +1456,7 @@ public class TravelGates extends JavaPlugin
 		}
 	}
 
-	private void loadConfiguration()
+	private boolean loadConfiguration()
 	{
 		_configFile = new File(TravelGatesConstants.PLUGIN_CONFIG_PATH);
 
@@ -1466,6 +1471,7 @@ public class TravelGates extends JavaPlugin
 			{
 				_LOGGER.severe(_tag + " Unable to create a stream to read the configuration file.");
 				ex.printStackTrace();
+				return false;
 			}
 
 			if (in != null)
@@ -1480,6 +1486,7 @@ public class TravelGates extends JavaPlugin
 				{
 					_LOGGER.severe(_tag + " Error while loading the Configuration file.");
 					ex.printStackTrace();
+					return false;
 				}
 
 				// DEBUG
@@ -1503,6 +1510,7 @@ public class TravelGates extends JavaPlugin
 				{
 					_LOGGER.severe(_tag + " Debug configuration reading failed.");
 					th.printStackTrace();
+					return false;
 				}
 
 				// LANGUAGE
@@ -1525,6 +1533,7 @@ public class TravelGates extends JavaPlugin
 				{
 					_LOGGER.severe(_tag + " Language configuration reading failed.");
 					th.printStackTrace();
+					return false;
 				}
 
 				// USE PERMISSIONS
@@ -1547,6 +1556,7 @@ public class TravelGates extends JavaPlugin
 				{
 					_LOGGER.severe(_tag + " Permissions configuration reading failed.");
 					th.printStackTrace();
+					return false;
 				}
 
 				// TELEPORT MODES
@@ -1579,6 +1589,7 @@ public class TravelGates extends JavaPlugin
 				{
 					_LOGGER.severe(_tag + " Teleport modes configuration reading failed.");
 					th.printStackTrace();
+					return false;
 				}
 
 				// CLEAR ALL INVENTORY
@@ -1601,6 +1612,7 @@ public class TravelGates extends JavaPlugin
 				{
 					_LOGGER.severe(_tag + " Clear all inventory configuration reading failed.");
 					th.printStackTrace();
+					return false;
 				}
 				
 				// PROTECT ADMIN INVENTORY
@@ -1624,6 +1636,7 @@ public class TravelGates extends JavaPlugin
 				{
 					_LOGGER.severe(_tag + " Protect admin inventory configuration reading failed.");
 					th.printStackTrace();
+					return false;
 				}
 
 				// AUTO SAVE
@@ -1646,6 +1659,7 @@ public class TravelGates extends JavaPlugin
 				{
 					_LOGGER.severe(_tag + " Autosave configuration reading failed.");
 					th.printStackTrace();
+					return false;
 				}
 
 				// TP BLOCK
@@ -1669,6 +1683,7 @@ public class TravelGates extends JavaPlugin
 				{
 					_LOGGER.severe(_tag + " TP Block configuration reading failed.");
 					th.printStackTrace();
+					return false;
 				}
 
 				// ADDITIONAL WORLDS
@@ -1699,6 +1714,7 @@ public class TravelGates extends JavaPlugin
 				{
 					_LOGGER.severe(_tag + " Additional Worlds configuration reading failed.");
 					th.printStackTrace();
+					return false;
 				}
 			}
 		}
@@ -1728,6 +1744,7 @@ public class TravelGates extends JavaPlugin
 			{
 				_LOGGER.severe(_tag + " Unable to create Configuration file: ");
 				e.printStackTrace();
+				return false;
 			}
 		}
 
@@ -1735,16 +1752,23 @@ public class TravelGates extends JavaPlugin
 		{
 			_LOGGER.info(_debug + " End loadConfiguration");
 		}
+		
+		return true;
 	}
 
-	private void loadMessages()
+	private boolean loadMessages()
 	{
 		_messages = new TravelGatesMessagesManager(this, _language);
-		_portalSignOnState = _messages.get(TravelGatesMessages.ON);
-		_portalSignOffState = _messages.get(TravelGatesMessages.OFF);
+		if (_messages != null)
+		{
+			_portalSignOnState = _messages.get(TravelGatesMessages.ON);
+			_portalSignOffState = _messages.get(TravelGatesMessages.OFF);
+			return true;
+		}
+		return false;
 	}
 
-	private void loadPermissions()
+	private boolean loadPermissions()
 	{
 		if (_isDebugEnabled)
 		{
@@ -1855,12 +1879,15 @@ public class TravelGates extends JavaPlugin
 			_usePermissions = false;
 			_LOGGER.severe(_tag + " Permissions loading has failed. Permissions disabled.");
 			th.printStackTrace();
+			return false;
 		}
 
 		if (_isDebugEnabled)
 		{
 			_LOGGER.info(_debug + " End loadPermissions");
 		}
+		
+		return true;
 	}
 
 	private void loadMaterialTypes()
@@ -2793,7 +2820,7 @@ public class TravelGates extends JavaPlugin
 		return strBld.toString();
 	}
 
-	private void loadAdditionalWorld()
+	private boolean loadAdditionalWorld()
 	{
 		if (_isDebugEnabled)
 		{
@@ -2867,6 +2894,8 @@ public class TravelGates extends JavaPlugin
 		}
 
 		_LOGGER.info(_tag + " Additional Worlds configuration set to : " + _setAdditionalWorlds.size() + " additional worlds loaded.");
+		
+		return true;
 	}
 
 	public String getListOfAdditionnalWorld()

@@ -17,7 +17,7 @@ public class TravelGatesMessagesManager
 {
 	private static final Logger _logger = Logger.getLogger(TravelGatesConstants.MINECRAFT);
 
-	private HashMap<TravelGatesMessages, String> _messages = new HashMap<TravelGatesMessages, String>();
+	private HashMap<TravelGatesMessages, String> _messages = null;
 	private TravelGates _plugin = null;
 
 	public TravelGatesMessagesManager(final TravelGates plugin, final String language)
@@ -68,6 +68,7 @@ public class TravelGatesMessagesManager
 			{
 				pluginMessages.load(in);
 				in.close();
+				_messages = new HashMap<TravelGatesMessages, String>();
 			}
 			catch (final IOException ex)
 			{
@@ -75,18 +76,22 @@ public class TravelGatesMessagesManager
 				ex.printStackTrace();
 			}
 
-			for (final Object key : pluginMessages.keySet())
+			if (_messages != null)
 			{
-				try
+				for (final Object key : pluginMessages.keySet())
 				{
-					final String strKey = String.valueOf(key).toUpperCase();
-					final TravelGatesMessages message = TravelGatesMessages.valueOf(strKey);
-					_messages.put(message, pluginMessages.getProperty(strKey));
-				}
-				catch (final Throwable th)
-				{
-					_logger.severe(TravelGatesConstants.PLUGIN_TAG + " Error while reading the Messages file.");
-					th.printStackTrace();
+					try
+					{
+						final String strKey = String.valueOf(key).toUpperCase();
+						final TravelGatesMessages message = TravelGatesMessages.valueOf(strKey);
+						_messages.put(message, pluginMessages.getProperty(strKey));
+					}
+					catch (final Throwable th)
+					{
+						_logger.severe(TravelGatesConstants.PLUGIN_TAG + " Error while reading the Messages file.");
+						th.printStackTrace();
+						_messages = null;
+					}
 				}
 			}
 		}

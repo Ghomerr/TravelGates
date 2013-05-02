@@ -29,54 +29,74 @@ public class TravelGatesUtils
 		_isDebugEnabled = state;
 	}
 
-	public static String floor(final Double value)
+	public static String floor (final Number value)
 	{
-		if (_isDebugEnabled)
-		{
-			_LOGGER.info(_debug + " Start floor(value=" + value + ")");
-		}
-
+		
 		final String str = String.valueOf(value);
-		final int i = str.indexOf(",");
-		final int index = (i > 0) ? i : str.indexOf(".");
-
-		final String ret = str.substring(0, index);
-
-		if (_isDebugEnabled)
+		final String[] splt = str.split(TravelGatesConstants.FLOAT_DELIM_PATTERN);
+		String ret = splt[0];
+		if (splt.length == 2 && TravelGatesConstants.ZERO.equals(splt[1]))
 		{
-			_LOGGER.info(_debug + " End floor : " + ret);
+			// A negative bloc at location = -3.0 is from -2.0 to -3.0. ShortLocs are absolute
+			final int intVal = Integer.parseInt(ret);
+			if (intVal < 0)
+			{
+				ret = String.valueOf(intVal + 1);
+			}
 		}
-
 		return ret;
 	}
-
-	public static String floor(final Float value)
-	{
-		if (_isDebugEnabled)
-		{
-			_LOGGER.info(_debug + " Start floor(value=" + value + ")");
-		}
-
-		final String str = String.valueOf(value);
-		final int i = str.indexOf(",");
-		final int index = (i > 0) ? i : str.indexOf(".");
-
-		final String ret = str.substring(0, index);
-
-		if (_isDebugEnabled)
-		{
-			_LOGGER.info(_debug + " End floor : " + ret);
-		}
-
-		return ret;
-	}
+	
+//	public static String floor(final Double value)
+//	{
+//		if (_isDebugEnabled)
+//		{
+//			_LOGGER.info(_debug + " Start floor(value=" + value + ")");
+//		}
+//
+//		final String str = String.valueOf(value);
+//		final int i = str.indexOf(",");
+//		final int index = (i > 0) ? i : str.indexOf(".");
+//
+//		final String ret = str.substring(0, index);
+//		
+//		final String[] splt = str.split("[.,]");
+//
+//		if (_isDebugEnabled)
+//		{
+//			_LOGGER.info(_debug + " End floor : " + ret);
+//		}
+//
+//		return splt[0];
+//	}
+//
+//	public static String floor(final Float value)
+//	{
+//		if (_isDebugEnabled)
+//		{
+//			_LOGGER.info(_debug + " Start floor(value=" + value + ")");
+//		}
+//
+//		final String str = String.valueOf(value);
+//		final int i = str.indexOf(",");
+//		final int index = (i > 0) ? i : str.indexOf(".");
+//
+//		final String ret = str.substring(0, index);
+//
+//		if (_isDebugEnabled)
+//		{
+//			_LOGGER.info(_debug + " End floor : " + ret);
+//		}
+//
+//		return ret;
+//	}
 
 	public static String locationToShortString(final Location location)
 	{
-		if (_isDebugEnabled)
-		{
-			_LOGGER.info(_debug + " Start locationToShortString(location=" + location + ")");
-		}
+//		if (_isDebugEnabled)
+//		{
+//			_LOGGER.info(_debug + " Start locationToShortString(location=" + location + ")");
+//		}
 
 		final StringBuilder strBldr = new StringBuilder();
 
@@ -84,20 +104,20 @@ public class TravelGatesUtils
 				.append(floor(location.getX())).append(TravelGatesConstants.DELIMITER).append(floor(location.getY()))
 				.append(TravelGatesConstants.DELIMITER).append(floor(location.getZ()));
 
-		if (_isDebugEnabled)
-		{
-			_LOGGER.info(_debug + " End locationToShortString : " + strBldr.toString());
-		}
+//		if (_isDebugEnabled)
+//		{
+//			_LOGGER.info(_debug + " End locationToShortString : " + strBldr.toString());
+//		}
 
 		return strBldr.toString();
 	}
 
 	public static String locationToFullString(final Location location)
 	{
-		if (_isDebugEnabled)
-		{
-			_LOGGER.info(_debug + " Start locationToFullString(location=" + location + ")");
-		}
+//		if (_isDebugEnabled)
+//		{
+//			_LOGGER.info(_debug + " Start locationToFullString(location=" + location + ")");
+//		}
 
 		final StringBuilder strBldr = new StringBuilder();
 
@@ -105,11 +125,11 @@ public class TravelGatesUtils
 				.append(floor(location.getX())).append(TravelGatesConstants.DELIMITER).append(floor(location.getY()))
 				.append(TravelGatesConstants.DELIMITER).append(floor(location.getZ()))
 				.append(TravelGatesConstants.DELIMITER).append(floor(location.getYaw()));
-
-		if (_isDebugEnabled)
-		{
-			_LOGGER.info(_debug + " End locationToFullString : " + strBldr.toString());
-		}
+//
+//		if (_isDebugEnabled)
+//		{
+//			_LOGGER.info(_debug + " End locationToFullString : " + strBldr.toString());
+//		}
 
 		return strBldr.toString();
 	}
@@ -163,10 +183,10 @@ public class TravelGatesUtils
 
 	public static Location shortStringToLocation(final String shortLoc, List<World> worlds)
 	{
-		if (_isDebugEnabled)
-		{
-			_LOGGER.info(_debug + " Start shortStringToLocation(shortLoc=" + shortLoc + ", worlds=" + worlds + ")");
-		}
+//		if (_isDebugEnabled)
+//		{
+//			_LOGGER.info(_debug + " Start shortStringToLocation(shortLoc=" + shortLoc + ", worlds=" + worlds + ")");
+//		}
 
 		final String[] tab = shortLoc.split(TravelGatesConstants.DELIMITER);
 		World worldFound = null;
@@ -191,19 +211,19 @@ public class TravelGatesUtils
 
 			newLoc = new Location(worldFound, posX, Double.parseDouble(tab[2]), posZ, 0f, 0f);
 
-			if (_isDebugEnabled)
-			{
-				_LOGGER.info(_debug + " Start shortStringToLocation : " + newLoc);
-			}
+//			if (_isDebugEnabled)
+//			{
+//				_LOGGER.info(_debug + " Start shortStringToLocation : " + newLoc);
+//			}
 			return newLoc;
 		}
 		else
 		{
 			_LOGGER.severe(TravelGatesConstants.PLUGIN_TAG + " The string '" + shortLoc + "' is invalid.");
-			if (_isDebugEnabled)
-			{
-				_LOGGER.info(_debug + " End shortStringToLocation : null");
-			}
+//			if (_isDebugEnabled)
+//			{
+//				_LOGGER.info(_debug + " End shortStringToLocation : null");
+//			}
 			return null;
 		}
 	}
@@ -614,6 +634,10 @@ public class TravelGatesUtils
 			{
 				// Portal block on dest
 				destLocation = portalBlock.getLocation(portalBlockLocation);
+				if (_isDebugEnabled)
+				{
+					_LOGGER.info(_debug + " Destination found under the portal block: " + destLocation);
+				}
 			}
 			else
 			{
@@ -621,9 +645,18 @@ public class TravelGatesUtils
 				for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
 				{
 					final Location relLoc = portalBlock.getRelative(tgFace.face()).getLocation();
+					if (_isDebugEnabled)
+					{
+						_LOGGER.info(_debug + " Searching destination around portal block at: " 
+							+ TravelGatesUtils.locationToShortString(relLoc) + " = " + relLoc);
+					}
 					if (plugin.getDestination(relLoc) != null)
 					{
 						destLocation = relLoc;
+						if (_isDebugEnabled)
+						{
+							_LOGGER.info(_debug + " Destination found near the portal block: " + destLocation);
+						}
 						break;
 					}
 				}

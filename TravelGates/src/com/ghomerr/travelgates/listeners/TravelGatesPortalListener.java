@@ -11,6 +11,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -37,12 +38,15 @@ public class TravelGatesPortalListener implements Listener
 		_plugin.getPM().registerEvents(this, _plugin);
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerPortal(final PlayerPortalEvent event)
 	{
-		if (_plugin.isPluginEnabled() && _plugin.isPortalTeleportEnabled())
+		if (!event.isCancelled() && _plugin.isPluginEnabled() && _plugin.isPortalTeleportEnabled())
 		{
-			System.out.println("Using portal!");
+			if (_plugin.isDebugEnabled())
+			{
+				_LOGGER.info(TravelGatesConstants.DEBUG_TAG + " Using portal.");
+			}
 			
 			final Player player = event.getPlayer();
 
@@ -51,45 +55,46 @@ public class TravelGatesPortalListener implements Listener
 			final World world = playerLocation.getWorld();
 
 			final Block playerBlock = world.getBlockAt(playerLocation);
-
-			Block portalBlock = null;
-
-			// Search portal block
-			for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
-			{
-				if (tgFace.isSimple())
-				{
-					final Block block = playerBlock.getRelative(tgFace.face());
-
-					if (block.getType() == Material.PORTAL)
-					{
-						portalBlock = block;
-						break;
-					}
-					else
-					{
-						if (_plugin.isDebugEnabled())
-						{
-							_LOGGER.info("[Debug] No portal block here: " + block.getType());
-						}
-					}
-				}
-			}
 			
+			Block portalBlock = null;
+			
+			// Player in portal ?
+			if (playerBlock.getType() == Material.PORTAL)
+			{
+				if (_plugin.isDebugEnabled())
+				{
+					_LOGGER.info(TravelGatesConstants.DEBUG_TAG + " Player was in portal.");
+				}
+				portalBlock = playerBlock;
+			}
+
 			if (portalBlock == null)
 			{
-				if (playerBlock.getType() == Material.PORTAL)
+				// Search portal block
+				for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
 				{
-					if (_plugin.isDebugEnabled())
+					if (tgFace.isSimple())
 					{
-						_LOGGER.info("[Debug] Player was in portal.");
+						final Block block = playerBlock.getRelative(tgFace.face());
+	
+						if (block.getType() == Material.PORTAL)
+						{
+							portalBlock = block;
+							break;
+						}
 					}
-					portalBlock = playerBlock;
 				}
 			}
 
 			if (portalBlock != null)
 			{
+				if (_plugin.isDebugEnabled())
+				{
+					_LOGGER.info(TravelGatesConstants.DEBUG_TAG + " Portal block found here: " 
+						+ TravelGatesUtils.locationToShortString(portalBlock.getLocation()) 
+						+ " = " + portalBlock.getLocation());
+				}
+				
 				final Location currentDestinationLocation = TravelGatesUtils.getDestinationLocationNearPortal(_plugin, playerLocation, portalBlock);
 
 				if (currentDestinationLocation != null)
@@ -276,7 +281,7 @@ public class TravelGatesPortalListener implements Listener
 				{
 					if (_plugin.isDebugEnabled())
 					{
-						_LOGGER.info("[Debug] No destination found.");
+						_LOGGER.info(TravelGatesConstants.DEBUG_TAG + " No destination found.");
 					}
 				}
 			}
@@ -284,7 +289,7 @@ public class TravelGatesPortalListener implements Listener
 			{
 				if (_plugin.isDebugEnabled())
 				{
-					_LOGGER.info("[Debug] No portal block found.");
+					_LOGGER.info(TravelGatesConstants.DEBUG_TAG + " No portal block found.");
 				}
 			}
 		}

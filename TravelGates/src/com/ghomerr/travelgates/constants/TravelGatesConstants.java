@@ -89,4 +89,8 @@ public interface TravelGatesConstants
 	public static final int POSITION_WITH_WORLD = 1;
 	
 	public static final int MAX_TARGET_RANGE = 5;
+	
+	public static final String FLOAT_DELIM_PATTERN = "[.,]";
+	
+	public static final String ZERO = "0";
 }

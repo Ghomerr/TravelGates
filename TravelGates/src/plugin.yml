@@ -1,8 +1,9 @@
 name: TravelGates
 main: com.ghomerr.travelgates.TravelGates
-version: 1.10.14 [1.5.1-R0.3]
+version: 1.10.15 [1.5.2-R0.1]
 author: Ghomerr
 description: Set up some travel gates. A file "destinations.dat" is created to store data.
+load: POSTWORLD
 commands:
  travelgates:
   description: master command of this plugin
