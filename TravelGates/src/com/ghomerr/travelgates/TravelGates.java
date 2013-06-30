@@ -1140,7 +1140,7 @@ public class TravelGates extends JavaPlugin
 			}
 
 			if (ignorePlayerLocation || targetAndCurrentLocationAreDifferent
-					&& (playerIsOnExistingDestination || !playerNotOnTeleportBlock && _tpBlock.isEnabled()))
+					&& (nearestDestinationShortLocation != null || !playerNotOnTeleportBlock && _tpBlock.isEnabled()))
 			{
 				final String currentDest = _mapDestinationsByShortLoc.get(nearestDestinationShortLocation);
 
