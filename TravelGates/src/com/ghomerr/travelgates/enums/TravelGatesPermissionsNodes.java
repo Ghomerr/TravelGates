@@ -17,6 +17,8 @@ public enum TravelGatesPermissionsNodes
 	
 	DEBUG(TravelGatesConstants.PERMISSIONS_ROOT + "debug", true),
 	
+	DISPLAYTELEPORTMESSAGE(TravelGatesConstants.PERMISSIONS_ROOT + "displayteleportmessage", true),
+	
 	WORLDS(TravelGatesConstants.PERMISSIONS_ROOT + "worlds", true),
 	
 	CONFIG(TravelGatesConstants.PERMISSIONS_ROOT + "config", true),

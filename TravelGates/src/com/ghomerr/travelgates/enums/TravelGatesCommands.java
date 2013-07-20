@@ -37,6 +37,8 @@ public enum TravelGatesCommands
 	{ "u", "o", "up", "opt", "update", "option", "options" }),
 
 	DEBUG(new String[] {"db","debug"}),
+	
+	DISPLAYTELEPORTMESSAGE(new String[] {"dtm", "displaytpmsg", "disptpmsg", "displaytpmessage", "displayteleportmessage"}),
 
 	WORLDS(new String[] {"w","world","worlds"}),
 

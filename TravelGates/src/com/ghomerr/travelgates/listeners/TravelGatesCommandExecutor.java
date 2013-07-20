@@ -667,6 +667,21 @@ public class TravelGatesCommandExecutor implements CommandExecutor
 								}
 							}
 						}
+						// /tg displayteleportmessage
+						else if (TravelGatesCommands.DISPLAYTELEPORTMESSAGE.has(arg1))
+						{
+							if (_plugin.hasPermission(player, TravelGatesPermissionsNodes.DISPLAYTELEPORTMESSAGE))
+							{
+								if (_plugin.toggleDisplayTeleportMessage())
+								{
+									player.sendMessage(ChatColor.GREEN + _plugin.getMessage(TravelGatesMessages.DISPLAY_TELEPORT_MESSAGE_ENABLED));
+								}
+								else
+								{
+									player.sendMessage(ChatColor.RED + _plugin.getMessage(TravelGatesMessages.DISPLAY_TELEPORT_MESSAGE_DISABLED));
+								}
+							}
+						}
 						// /tg <destination> ...
 						else if (arg1.matches(TravelGatesConstants.DESTINATION_NAME_PATTERN))
 						{

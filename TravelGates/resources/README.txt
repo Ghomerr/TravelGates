@@ -45,6 +45,7 @@ Configuration parameters:
     clearallinventory       : (true/false) used to clear the armor content when the "i" option is set to a destination
     protectadmininventory   : (true/false) used to protect admin inventory when the clear inventory option is enabled
     tpblock                 : (type[,data]/disabled) used to select the teleport block:
+    displayteleportmessage  : (true/false) used to disaplay or not the teleport messages
                                 - type (case insensitive) = BEDROCK,BOOKSHELF,BRICK,CLAY,COAL_ORE,COBBLESTONE,DIAMOND_BLOCK,DIAMOND_ORE,DIRT,ENDER_STONE,FURNACE,GLASS,GLOWING_REDSTONE_ORE,GLOWSTONE,GOLD_BLOCK,GOLD_ORE,GRASS,GRAVEL,ICE,IRON_BLOCK,IRON_ORE,JACK_O_LANTERN,JUKEBOX,LAPIS_BLOCK,LAPIS_ORE,LOG,MELON_BLOCK,MOSSY_COBBLESTONE,MYCEL,NETHER_BRICK,NETHERRACK,NOTE_BLOCK,OBSIDIAN,PUMPKIN,REDSTONE,SAND,SANDSTONE,SMOOTH_BRICK,SNOW_BLOCK,SOUL_SAND,SPONGE,STONE,TNT,WOOD,WOOL,WORKBENCH
                                 - data (case insensitive) = all DyeColor for WOOL or TreeSpecies for LOG
     worlds                  : (world_name1,world_name2,...) used to load additional worlds which would not be loaded automatically. Other will be ignored (already loaded or not worlds)
@@ -73,6 +74,7 @@ travelgates.admintp     # Permission to travel to an Admin's Destination
 travelgates.save        # Permission to request an instant save of destinations and restrictions
 travelgates.update      # Permission to update destination's data
 travelgates.debug       # Permission to toggle the Debug Mode
+travelgates.displayteleportmessage       # Permission to toggle the displayteleportmessage configuration
 travelgates.worlds      # Permission to display available loaded worlds
 travelgates.config      # Permission to display the current configuration
 travelgates.perms       # Permission to toogle permissions 
@@ -112,6 +114,7 @@ Plugin in-game usage:
     /tg del <destination> [-s] : delete a destination
     /tg save : Force saving all data (configuration, destinations, restrictions)
     /tg debug : Toggle the debug mode
+    /tg dtm : Toggle the display of the teleport messages
     /tg update <destination> [-options] : update all desintation's options
     /tg worlds (<world>|*) [-lu] [world_type]: display available loaded worlds with no options. World name use the same pattern as destinations. Wildcard * can be used to display all worlds in the server directory. Use options [-lu] to load or unload a world. Without options, it will display the state of the world (loaded or unloaded). With the l option is used, you can add the world type : (normal|nether|end), default is normal. You can't unload worlds which have still some players.
     /tg config : display current configuration
@@ -163,6 +166,7 @@ Commands aliases:
     SAVE: "s", "sv", "save"
     UPDATE: "u", "o", "up", "opt", "update", "option", "options" 
     DEBUG: "db","debug"
+    DISPLAYTELEPORTMESSAGE: "dtm", "displaytpmsg", "disptpmsg", "displaytpmessage", "displayteleportmessage"
     WORLDS: "w","world","worlds"
     RESTRICT: "r","rst","restrict","restricts","restriction","restrictions"
     CONFIG: "c","conf","config","configuration"

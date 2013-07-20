@@ -12,6 +12,8 @@ public enum TravelGatesConfigurations
 	
 	DEBUG("debug"),
 	
+	DISPLAYTELEPORTMESSAGE("displayteleportmessage"),
+	
 	CLEARALLINVENTORY("clearallinventory"),
 	
 	PROTECTADMININVENTORY("protectadmininventory"),

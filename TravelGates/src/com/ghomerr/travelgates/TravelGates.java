@@ -66,6 +66,7 @@ public class TravelGates extends JavaPlugin
 	private boolean _protectAdminInventory = false;
 	private boolean _autosave = false;
 	private boolean _isDebugEnabled = false;
+	private boolean _isDisplayTeleportMessage = true;
 	private TravelGatesTeleportBlock _tpBlock = new TravelGatesTeleportBlock();
 
 	// messages
@@ -1197,9 +1198,12 @@ public class TravelGates extends JavaPlugin
 //						+ "; perm=" + hasPermission(player, TravelGatesPermissionsNodes.PROTECTADMININV));
 				if (!inventoryCleared || isProtectedInventory(player))
 				{
-					player.sendMessage(ChatColor.YELLOW
-							+ _messages.get(TravelGatesMessages.YOU_ARE_ARRIVED_AT, ChatColor.AQUA + destination + ChatColor.YELLOW)
-							+ ChatColor.GREEN + _messages.get(TravelGatesMessages.INVENTORY_KEPT));
+					if (_isDisplayTeleportMessage)
+					{
+						player.sendMessage(ChatColor.YELLOW
+								+ _messages.get(TravelGatesMessages.YOU_ARE_ARRIVED_AT, ChatColor.AQUA + destination + ChatColor.YELLOW)
+								+ ChatColor.GREEN + _messages.get(TravelGatesMessages.INVENTORY_KEPT));
+					}
 				}
 				else
 				{
@@ -1218,9 +1222,12 @@ public class TravelGates extends JavaPlugin
 
 					inventory.clear();
 
-					player.sendMessage(ChatColor.YELLOW
-							+ _messages.get(TravelGatesMessages.YOU_ARE_ARRIVED_AT, ChatColor.AQUA + destination + ChatColor.YELLOW) + ChatColor.RED
-							+ inventoryMessage);
+					if (_isDisplayTeleportMessage)
+					{
+						player.sendMessage(ChatColor.YELLOW
+								+ _messages.get(TravelGatesMessages.YOU_ARE_ARRIVED_AT, ChatColor.AQUA + destination + ChatColor.YELLOW) + ChatColor.RED
+								+ inventoryMessage);
+					}
 				}
 
 				// If the arrival chunk is unloaded, it will be forced to load
@@ -1509,6 +1516,30 @@ public class TravelGates extends JavaPlugin
 				catch (final Throwable th)
 				{
 					_LOGGER.severe(_tag + " Debug configuration reading failed.");
+					th.printStackTrace();
+					return false;
+				}
+				
+				// DISPLAY TELEPORT MESSAGE
+				try
+				{
+					final String displayTeleportMessage = 
+							_configData.getProperty(TravelGatesConfigurations.DISPLAYTELEPORTMESSAGE.value());
+
+					if (TravelGatesUtils.stringIsNotBlank(displayTeleportMessage))
+					{
+						_isDisplayTeleportMessage = Boolean.parseBoolean(displayTeleportMessage.toLowerCase());
+					}
+					else
+					{
+						_LOGGER.warning(_tag + " Display teleport message configuration not found.");
+					}
+
+					_LOGGER.info(_tag + " Display teleport message configuration set to : " + _isDisplayTeleportMessage);
+				}
+				catch (final Throwable th)
+				{
+					_LOGGER.severe(_tag + " Display teleport message configuration reading failed.");
 					th.printStackTrace();
 					return false;
 				}
@@ -2918,5 +2949,18 @@ public class TravelGates extends JavaPlugin
 	public boolean isProtectedInventory(final Player player)
 	{
 		return _protectAdminInventory && hasPermission(player, TravelGatesPermissionsNodes.PROTECTADMININV);
+	}
+	
+	public boolean toggleDisplayTeleportMessage()
+	{
+		_isDisplayTeleportMessage = !_isDisplayTeleportMessage;
+		_configData.put(TravelGatesConfigurations.DISPLAYTELEPORTMESSAGE.value(), String.valueOf(_isDisplayTeleportMessage));
+
+		if (_autosave)
+		{
+			saveConfiguration();
+		}
+		
+		return _isDisplayTeleportMessage;
 	}
 }
