@@ -39,6 +39,7 @@ PORTAL_SIGN_NO_DEST=Le Panneau de Portal ne contient aucune Destination.
 PORTAL_SIGN_UNAVAILABLE_LINE=Le Panneau de Portail ne dispose pas de ligne pour afficher l'état du portail.
 PORTAL_TP_CANCELLED=Téléportation annulée.
 PORTAL_SIGN_IS_OFF=Le Panneau de Portail est désactivé.
+PORTAL_SIZE_INVALID=La taille du portail n'est pas correcte. Il doit faire au moins 2 blocs de portail à sa base.
 TELEPORT_TO_NETHER=Vous allez être téléporté(e) dans le Nether.
 WRONG_POSITION_VALUE=Les coordonnées saisies sont incorrectes. (Exemple: -p(world,x,y,z) ou -p(x,y,z) et -30M < x,z < +30M et 0 < y < HauteurMax et y = ? -> plus haut bloc)
 AVAILABLE_WORLDS_ARE=Les mondes disponibles sont :

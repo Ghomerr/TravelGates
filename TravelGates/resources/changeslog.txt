@@ -1,6 +1,11 @@
 TODO List:
 - Version 2
 
+version 1.10.18 (2013-10-20):
+- Support Dev Build 1.6.4-R0.1
+- Nether portals need to have at least 2 portal blocs at their base.
+- The plugin works with different size and shape of portals and even different blocks.
+
 version 1.10.17 (2013-06-30):
 - Support Recommanded Build 1.6.2-R0.1
 - New configuration to disable teleport messages (new permission node and new messages).

@@ -671,81 +671,101 @@ public class TravelGatesUtils
 		return destLocation;
 	}
 
-	public static Sign getSignOnPortalFrames(final Block portalBlock, final World world)
+	public static Sign getSignOnPortalFrames(final Block portalBlock, final TravelGatesBlockFaces otherPortalBlockFace, 
+			final World world)
 	{
 		if (_isDebugEnabled)
 		{
-			_LOGGER.info(_debug + " Start getSignOnPortalFrames(portalBlock=" + portalBlock + ", world=" + world + ")");
+			_LOGGER.info(_debug + " Start getSignOnPortalFrames(portalBlock=" + portalBlock 
+					+ ",otherPortalBlockFace=" + otherPortalBlockFace 
+					+ ", world=" + world + ")");
 		}
 
-		Sign portalSign = null;
-		Block portalFrame = null;
-
+		final Block upperPortalBlock = portalBlock.getRelative(BlockFace.UP);
+		if (upperPortalBlock.getType() != Material.PORTAL)
+		{
+			if (_isDebugEnabled)
+			{
+				_LOGGER.info(_debug + " End getSignOnPortalFrames : upper block is not a portal block.");
+			}
+			return null;
+		}
+		
+		// Search the portal sign on the frame on the portal block side
+		final Block portalFrame1 = getPortalFrameTo(otherPortalBlockFace.opposite(), upperPortalBlock);
+		Sign portalSign = getSignOnFrame(portalFrame1);
+		if (portalSign == null) 
+		{
+			// Search the portal sign on the frame on the other portal block side
+			final Block portalFrame2 = getPortalFrameTo(otherPortalBlockFace.face(), upperPortalBlock);
+			portalSign = getSignOnFrame(portalFrame2);
+		}
+		
 		// Search portal frame
-		for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
-		{
-			final Block adjacentBlock = portalBlock.getRelative(tgFace.face());
+//		for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
+//		{
+//			final Block adjacentBlock = portalBlock.getRelative(tgFace.face());
+//
+//			if (adjacentBlock.getType() == Material.OBSIDIAN)
+//			{
+//				portalFrame = adjacentBlock;
+//				break;
+//			}
+//		}
 
-			if (adjacentBlock.getType() == Material.OBSIDIAN)
-			{
-				portalFrame = adjacentBlock;
-				break;
-			}
-		}
-
-		// Search sign on this frame
-		if (portalFrame != null)
-		{
-			final Block frameUpperBlock = portalFrame.getRelative(BlockFace.UP);
-			BlockFace portalFace = null;
-
-			for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
-			{
-				if (tgFace.isSimple())
-				{
-					final BlockFace currFace = tgFace.face();
-
-					final Block adjacentFrameBlock = frameUpperBlock.getRelative(currFace);
-
-					if (portalSign == null && isSign(adjacentFrameBlock))
-					{
-						portalSign = (Sign) adjacentFrameBlock.getState();
-					}
-
-					if (portalFace == null && adjacentFrameBlock.getType() == Material.PORTAL)
-					{
-						portalFace = currFace;
-					}
-
-					if (portalSign != null && portalFace != null)
-					{
-						break;
-					}
-				}
-			}
-
-			// Search sign on the opposite frame
-			if (portalSign == null && portalFace != null)
-			{
-				final Block oppositeFrameUpperBlock = frameUpperBlock.getRelative(portalFace, 3);
-
-				for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
-				{
-					if (tgFace.isSimple())
-					{
-						final BlockFace currFace = tgFace.face();
-
-						final Block adjacentFrameBlock = oppositeFrameUpperBlock.getRelative(currFace);
-
-						if (portalSign == null && isSign(adjacentFrameBlock))
-						{
-							portalSign = (Sign) adjacentFrameBlock.getState();
-							break;
-						}
-					}
-				}
-			}
-		}
+//		// Search sign on the first frame
+//		if (portalFrame1 != null)
+//		{
+//			//final Block frameUpperBlock = portalFrame1.getRelative(BlockFace.UP);
+//			BlockFace portalFace = null;
+//
+//			for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
+//			{
+//				if (tgFace.isSimple())
+//				{
+//					final BlockFace currFace = tgFace.face();
+//
+//					final Block adjacentFrameBlock = portalFrame1.getRelative(currFace);
+//
+//					if (portalSign == null && isSign(adjacentFrameBlock))
+//					{
+//						portalSign = (Sign) adjacentFrameBlock.getState();
+//					}
+//
+//					if (portalFace == null && adjacentFrameBlock.getType() == Material.PORTAL)
+//					{
+//						portalFace = currFace;
+//					}
+//
+//					if (portalSign != null && portalFace != null)
+//					{
+//						break;
+//					}
+//				}
+//			}
+//
+//			// Search sign on the opposite frame
+//			if (portalSign == null && portalFace != null)
+//			{
+//				final Block oppositeFrameUpperBlock = portalFrame1.getRelative(portalFace, 3);
+//
+//				for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
+//				{
+//					if (tgFace.isSimple())
+//					{
+//						final BlockFace currFace = tgFace.face();
+//
+//						final Block adjacentFrameBlock = oppositeFrameUpperBlock.getRelative(currFace);
+//
+//						if (portalSign == null && isSign(adjacentFrameBlock))
+//						{
+//							portalSign = (Sign) adjacentFrameBlock.getState();
+//							break;
+//						}
+//					}
+//				}
+//			}
+//		}
 		
 		if (_isDebugEnabled)
 		{
@@ -753,6 +773,41 @@ public class TravelGatesUtils
 		}
 
 		return portalSign;
+	}
+	
+	private static Sign getSignOnFrame(final Block portalFrame) 
+	{
+		Sign portalSign = null;
+		if (portalFrame != null)
+		{
+			for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
+			{
+				if (tgFace.isSimple())
+				{
+					final Block adjacentFrameBlock = portalFrame.getRelative(tgFace.face());
+
+					if (isSign(adjacentFrameBlock))
+					{
+						portalSign = (Sign) adjacentFrameBlock.getState();
+						break;
+					}
+				}
+			}
+		}
+		return portalSign;
+	}
+	
+	private static Block getPortalFrameTo(final BlockFace direction, final Block portalBlock) 
+	{
+		Block portalFrame = null;
+		int i = 0;
+		do
+		{
+			System.out.println("portalFrame="+portalFrame+", portalBlock="+portalBlock+", direction="+direction+", i="+i);
+			portalFrame = portalBlock.getRelative(direction, ++i);
+		}
+		while (portalFrame != null && portalFrame.getType() == Material.PORTAL);
+		return portalFrame;
 	}
 
 	public static int getCoordinateDiff(final int coordA, final int coordB)

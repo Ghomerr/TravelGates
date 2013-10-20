@@ -39,6 +39,7 @@ PORTAL_SIGN_NO_DEST=Portal Sign doesn't have any Destination
 PORTAL_SIGN_UNAVAILABLE_LINE=Portal Sign had no available line to add the portal's state.
 PORTAL_TP_CANCELLED=Teleportation is cancelled.
 PORTAL_SIGN_IS_OFF=Portal Sign is disabled.
+PORTAL_SIZE_INVALID=Invalid portal size. It must have at least 2 portal blocs at its base.
 TELEPORT_TO_NETHER=You are going to be teleported to the Nether.
 WRONG_POSITION_VALUE=The input location is invalid. (Example: -p(world,x,y,z) or -p(x,y,z) and -30M < x,z < +30M and 0 < y < MaxHeight and y = ? -> highest block)
 AVAILABLE_WORLDS_ARE=Available worlds are :

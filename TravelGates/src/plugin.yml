@@ -1,6 +1,6 @@
 name: TravelGates
 main: com.ghomerr.travelgates.TravelGates
-version: 1.10.17 [1.6.2-R0.1]
+version: 1.10.18 [1.6.4-R0.1]
 author: Ghomerr
 description: Set up some travel gates. A file "destinations.dat" is created to store data.
 load: POSTWORLD

@@ -95,11 +95,35 @@ public class TravelGatesPortalListener implements Listener
 						+ " = " + portalBlock.getLocation());
 				}
 				
+				// Check portal size
+				boolean otherPortalBlockFound = false;
+				TravelGatesBlockFaces otherPortalBlockFace = null;
+				for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
+				{
+					if (tgFace.isSimple())
+					{
+						final Block block = portalBlock.getRelative(tgFace.face());
+						
+						if (block.getType() == Material.PORTAL)
+						{
+							otherPortalBlockFound = true;
+							otherPortalBlockFace = tgFace;
+							break;
+						}
+					}
+				}
+				if (!otherPortalBlockFound) 
+				{
+					player.sendMessage(ChatColor.RED + _plugin.getMessage(TravelGatesMessages.PORTAL_SIZE_INVALID));
+					player.sendMessage(ChatColor.YELLOW + _plugin.getMessage(TravelGatesMessages.TELEPORT_TO_NETHER));
+					return;
+				}
+				
 				final Location currentDestinationLocation = TravelGatesUtils.getDestinationLocationNearPortal(_plugin, playerLocation, portalBlock);
 
 				if (currentDestinationLocation != null)
 				{
-					final Sign portalSign = TravelGatesUtils.getSignOnPortalFrames(portalBlock, world);
+					final Sign portalSign = TravelGatesUtils.getSignOnPortalFrames(portalBlock, otherPortalBlockFace, world);
 
 					// Sign info
 					if (portalSign != null)
@@ -317,14 +341,14 @@ public class TravelGatesPortalListener implements Listener
 
 					final Block attachedBlock = clickedBlock.getRelative(leverAttachedFace);
 
-					final Block adjacentToAttachedBlock = clickedBlock.getRelative(leverAttachedFace, 2);
+//					final Block adjacentToAttachedBlock = clickedBlock.getRelative(leverAttachedFace, 2);
 
-					// Attached on OBSIDIAN
-					if (attachedBlock.getType() == Material.OBSIDIAN && adjacentToAttachedBlock.getType() == Material.PORTAL)
+					// Attached on Portal FRAME
+					if (attachedBlock.getType() != Material.AIR /*&& adjacentToAttachedBlock.getType() == Material.PORTAL*/)
 					{
 						final BlockFace leverOppositeFace = leverAttachedFace.getOppositeFace();
 
-						// Check OBSIDIAN Faces
+						// Check frame Faces
 						for (TravelGatesBlockFaces tgFace : TravelGatesBlockFaces.values())
 						{
 							final BlockFace face = tgFace.face();
@@ -351,7 +375,7 @@ public class TravelGatesPortalListener implements Listener
 										if (_plugin.hasPermission(player, TravelGatesPermissionsNodes.LEVER))
 										{
 											// Add Lever state to the sign
-											if (attachedBlock.isBlockPowered())
+											if (lever.isPowered())
 											{
 												sideSign.setLine(selectedLine, ChatColor.RED + _plugin.getMessage(TravelGatesMessages.ON));
 											}
